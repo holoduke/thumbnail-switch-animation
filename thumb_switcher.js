@@ -2,12 +2,13 @@
 	
 	function init(el){
 		var switchSpeed = el.getAttribute("data-thumb-switch-speed");
+		var alternativeHost = el.getAttribute("data-thumb-host");
 		if (!switchSpeed){
 			switchSpeed = 1000;
 		}
 
 		var orgSrc = el.src;
-		var currentImage = 0;
+		var currentImage = 1;
 		var limit = null;
 		var timerRef;
 		
@@ -19,7 +20,16 @@
 			var fileName = orgSrc.substr(0,~-orgSrc.lastIndexOf(".")+1)
 			var fileExtension = "."+orgSrc.substr((~-orgSrc.lastIndexOf(".") >>> 0) + 2);
 		}
-			
+		
+		if (alternativeHost){
+			var switchImageUrl = document.createElement('a');
+			var orgImageUrl = document.createElement('a');
+			switchImageUrl.href = alternativeHost;
+			var orgFilename = fileName.split('/').pop();
+			var path = switchImageUrl.protocol+"//"+switchImageUrl.hostname+switchImageUrl.pathname+"/";
+			var fileName = path + orgFilename;
+		}
+		
 		var mouseoverEvent = function(e){		
 	
 			function startRotating(){
@@ -35,11 +45,10 @@
 		
 				//if we have a limit (known when try to load an non existant image) we reset to first image
 				if (currentImage == limit){
-					currentImage = 0;
+					currentImage = 1;
 				    el.src = orgSrc;
 				    return delayedRerun();
 				}
-					
 				//try to load the image file
 				//if image can be loaded we attach it to the element and schedule next rotation
 				//if image can not be found we either restart or stop depending if any images can be found
@@ -52,13 +61,13 @@
 				nImg.onerror = function() {
 					
 					//no roting images found at all
-					if (currentImage ==0){
+					if (currentImage ==1){
 						el.removeEventListener("mouseover",mouseoverEvent);
 						el.removeEventListener("mouseout",mouseoutEvent);
 					}
 					else{
 						limit = currentImage; //make sure next time we don't try to load the nonexisting image
-					    currentImage = 0;
+					    currentImage = 1;
 					    el.src = orgSrc;
 					    delayedRerun();
 					}
@@ -73,7 +82,7 @@
 		var mouseoutEvent = function(){
 			clearTimeout(timerRef);
 			el.src = orgSrc;	
-			currentImage =0;
+			currentImage = 1;
 		}
 		
 		el.addEventListener("mouseover", mouseoverEvent);	
@@ -87,6 +96,7 @@
 		 
 		var len=imageList.length;
 		for (i=0; i < len; i++){
+			
 			init(imageList[i]);
 		}
 	});	
