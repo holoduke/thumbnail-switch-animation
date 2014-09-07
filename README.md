@@ -29,7 +29,3 @@ The script contains all the logic to handle all situations when a particular ima
 <img class="thumb_switcher" src="image3" data-thumb-switch-speed="700">
 </div>
 ```
-'''html
-
-
-'''
