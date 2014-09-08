@@ -2,16 +2,8 @@
 	
 	var elEventListeners = [];
 	
-	function addEventListeners(el,mouseover,mouseout){
-		console.log('add event ',el)
-		elEventListeners.push({'el':el,'mouseover':mouseover,'mouseout':mouseout});
-		el.addEventListener("mouseover", mouseover);	
-		el.addEventListener("mouseout", mouseout);
-	}
-	
 	function removeEventListeners(el){
-		
-		
+			
 		for(var i=elEventListeners.length-1; i >=0 ;i--){
 			
 			if (elEventListeners[i].el == el){
@@ -25,7 +17,6 @@
 	
 	function reset(){
 		for(var i=elEventListeners.length-1; i >=0 ;i--){
-			console.log(elEventListeners[i]);
 			elEventListeners[i].el.removeEventListener("mouseover",elEventListeners[i].mouseover);
 			elEventListeners[i].el.removeEventListener("mouseout",elEventListeners[i].mouseout);
 			elEventListeners.splice(i,1);
@@ -63,7 +54,7 @@
 		}
 		
 		var mouseoverEvent = function(e){		
-	
+			console.log("mouse over ",fileName);
 			function startRotating(){
 		
 				//rerun the rotating method after x ms
@@ -117,14 +108,14 @@
 			el.src = orgSrc;	
 			currentImage = 1;
 		}
-		addEventListeners(el,mouseoverEvent,mouseoutEvent)
-		//el.addEventListener("mouseover", mouseoverEvent);	
-		//el.addEventListener("mouseout", mouseoutEvent);
+		
+		elEventListeners.push({'el':el,'mouseover':mouseoverEvent,'mouseout':mouseoutEvent});
+		el.addEventListener("mouseover", mouseoverEvent);	
+		el.addEventListener("mouseout", mouseoutEvent);
 	}
 	
 	window.ThumbSwitcher = {};
 	window.ThumbSwitcher.init = function(){
-		
 		reset();
 		var imageList = document.getElementsByClassName("thumb_switcher");
 
