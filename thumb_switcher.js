@@ -49,12 +49,11 @@
 			var orgImageUrl = document.createElement('a');
 			switchImageUrl.href = alternativeHost;
 			var orgFilename = fileName.split('/').pop();
-			var path = switchImageUrl.protocol+"//"+switchImageUrl.hostname+switchImageUrl.pathname+"/";
+			var path = switchImageUrl.protocol+"//"+switchImageUrl.hostname+"/"+switchImageUrl.pathname+"/";
 			var fileName = path + orgFilename;
 		}
 		
 		var mouseoverEvent = function(e){		
-			console.log("mouse over ",fileName);
 			function startRotating(){
 		
 				//rerun the rotating method after x ms
