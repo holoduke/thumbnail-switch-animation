@@ -75,6 +75,13 @@
 				//if image can be loaded we attach it to the element and schedule next rotation
 				//if image can not be found we either restart or stop depending if any images can be found
 				var nImg = document.createElement('img');
+				
+				if (nImg.completed == 1){
+					el.src = newFile;
+				    currentImage++;
+				    delayedRerun(); 
+				}
+				
 				nImg.onload = function() {
 				    el.src = newFile;
 				    currentImage++;
@@ -85,8 +92,6 @@
 					//no roting images found at all
 					if (currentImage ==1){
 						removeEventListeners(el);
-						//el.removeEventListener("mouseover",mouseoverEvent);
-						//el.removeEventListener("mouseout",mouseoutEvent);
 					}
 					else{
 						limit = currentImage; //make sure next time we don't try to load the nonexisting image
@@ -116,7 +121,7 @@
 	window.ThumbSwitcher = {};
 	window.ThumbSwitcher.init = function(){
 		reset();
-		var imageList = document.getElementsByClassName("thumb_switcher");
+		var imageList = GEBCN("thumb_switcher");
 
 		var len=imageList.length;
 		for (i=0; i < len; i++){
@@ -127,6 +132,66 @@
 	window.ThumbSwitcher.reset = function(){
 		reset();
 	}
+	
+	function GEBCN(cn){
+	    if(document.getElementsByClassName) // Returns NodeList here
+	        return document.getElementsByClassName(cn);
+
+	    cn = cn.replace(/ *$/, '');
+
+	    if(document.querySelectorAll) // Returns NodeList here
+	        return document.querySelectorAll((' ' + cn).replace(/ +/g, '.'));
+
+	    cn = cn.replace(/^ */, '');
+
+	    var classes = cn.split(/ +/), clength = classes.length;
+	    var els = document.getElementsByTagName('*'), elength = els.length;
+	    var results = [];
+	    var i, j, match;
+
+	    for(i = 0; i < elength; i++){
+	        match = true;
+	        for(j = clength; j--;)
+	            if(!RegExp(' ' + classes[j] + ' ').test(' ' + els[i].className + ' '))
+	                match = false;
+	        if(match)
+	            results.push(els[i]);
+	    }
+
+	    // Returns Array here
+	    return results;
+	}
+	
+	//addEventListener polyfill 1.0 / Eirik Backer / MIT Licence
+	(function(win, doc){
+		if(win.addEventListener)return;		//No need to polyfill
+	 
+		function docHijack(p){var old = doc[p];doc[p] = function(v){return addListen(old(v))}}
+		function addEvent(on, fn, self){
+			return (self = this).attachEvent('on' + on, function(e){
+				var e = e || win.event;
+				e.preventDefault  = e.preventDefault  || function(){e.returnValue = false}
+				e.stopPropagation = e.stopPropagation || function(){e.cancelBubble = true}
+				fn.call(self, e);
+			});
+		}
+		function addListen(obj, i){
+			if(i = obj.length)while(i--)obj[i].addEventListener = addEvent;
+			else obj.addEventListener = addEvent;
+			return obj;
+		}
+	 
+		addListen([doc, win]);
+		if('Element' in win)win.Element.prototype.addEventListener = addEvent;			//IE8
+		else{																			//IE < 8
+			doc.attachEvent('onreadystatechange', function(){addListen(doc.all)});		//Make sure we also init at domReady
+			docHijack('getElementsByTagName');
+			docHijack('getElementById');
+			docHijack('createElement');
+			addListen(doc.all);	
+		}
+	})(window, document);
+	
 	
 	var domReady = (function() {
 
